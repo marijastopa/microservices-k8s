@@ -1,0 +1,43 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+
+# Kubernetes
+*.kubeconfig
+
+# Secrets
+secrets/
+*.pem
+*.key
+*.env
+
+# Build artifacts
+*.pyc
+__pycache__/
+node_modules/
+target/
+bin/
+obj/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
+
+# Helm
+*.tgz
+charts/
