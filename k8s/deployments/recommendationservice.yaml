@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: recommendationservice
-        image: europe-west1-docker.pkg.dev/microservices-gke-486922/microservices/recommendationservice:v1
+        image: europe-west1-docker.pkg.dev/microservices-gke-486922/microservices/recommendationservice:v3
         ports:
         - containerPort: 8080
         env:
@@ -29,8 +29,18 @@ spec:
             cpu: 50m
             memory: 220Mi
           limits:
-            cpu: 100m
+            cpu: 200m
             memory: 450Mi
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
       securityContext:
         runAsNonRoot: true
-        runAsUser: 65532
+        runAsUser: 1000

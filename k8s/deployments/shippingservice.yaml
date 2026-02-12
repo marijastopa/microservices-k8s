@@ -27,8 +27,18 @@ spec:
             cpu: 50m
             memory: 64Mi
           limits:
-            cpu: 100m
+            cpu: 200m
             memory: 128Mi
+        livenessProbe:
+          tcpSocket:
+            port: 50051
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 50051
+          initialDelaySeconds: 10
+          periodSeconds: 10
       securityContext:
         runAsNonRoot: true
         runAsUser: 65532
