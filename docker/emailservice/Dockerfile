@@ -1,32 +1,29 @@
 # Build stage
 FROM python:3.12-slim AS builder
-
 WORKDIR /app
-
-# Copy requirements first for better layer caching
 COPY requirements.txt .
-
-# Install dependencies to user site-packages
 RUN pip install --no-cache-dir --user -r requirements.txt
 
-# Final stage - Google Distroless for minimal attack surface
-FROM gcr.io/distroless/python3-debian12:nonroot
-
+# Final stage - slim instead of distroless
+FROM python:3.12-slim
 WORKDIR /app
 
+# Create non-root user
+RUN useradd -m -u 1000 appuser
+
 # Copy installed packages from builder
-COPY --from=builder --chown=nonroot:nonroot /root/.local /home/nonroot/.local
+COPY --from=builder --chown=appuser:appuser /root/.local /home/appuser/.local
 
 # Copy application code
-COPY --chown=nonroot:nonroot *.py ./
-COPY --chown=nonroot:nonroot templates/ ./templates/
+COPY --chown=appuser:appuser *.py ./
+COPY --chown=appuser:appuser templates/ ./templates/
 
 # Set environment
-ENV PATH=/home/nonroot/.local/bin:$PATH \
+ENV PATH=/home/appuser/.local/bin:$PATH \
     PYTHONUNBUFFERED=1
 
-EXPOSE 8080
+USER appuser
 
-USER nonroot
+EXPOSE 8080
 
 ENTRYPOINT ["python3", "email_server.py"]
