@@ -2,9 +2,24 @@
 
 Helm chart for deploying a microservices e-commerce application on GKE.
 
+## Dependencies
+
+This chart includes Redis as a dependency (subchart):
+- Redis 25.2.0 from Bitnami
+- Automatically deployed when `redis.enabled=true`
+
 ## Installation
 ```bash
-helm install microservices ./microservices
+# Download dependencies first
+helm dependency update ./microservices
+
+# Install with Redis
+helm install microservices ./microservices \
+  --set redis.auth.password=$REDIS_PASSWORD
+
+# Install without Redis (in-memory cart)
+helm install microservices ./microservices \
+  --set redis.enabled=false
 ```
 
 ## Configuration
@@ -15,7 +30,7 @@ Edit `microservices/values.yaml` to customize:
 - Replica counts
 - Resource limits
 - HPA settings
-- Environment variables
+- Redis configuration (as subchart)
 
 ## Deployed Services
 
@@ -23,12 +38,19 @@ Edit `microservices/values.yaml` to customize:
 - checkoutservice
 - recommendationservice
 - productcatalogservice
-- cartservice
+- cartservice (uses Redis when enabled)
 - currencyservice
 - paymentservice
 - shippingservice
 - emailservice
 - adservice
+
+## Redis Subchart
+
+Redis is managed as a Helm dependency:
+- Condition: `redis.enabled` (default: true)
+- Password: Must be provided via `--set redis.auth.password=xxx`
+- Cartservice automatically connects when Redis is enabled
 
 ## HPA Configuration
 

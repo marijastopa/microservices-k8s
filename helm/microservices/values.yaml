@@ -3,13 +3,29 @@ global:
   registry: europe-west1-docker.pkg.dev/microservices-gke-486922/microservices
   imageTag: v1
 
-# Redis configuration
+# Redis subchart configuration (dependency)
 redis:
-  enabled: false
-  host: redis-master
-  port: 6379
+  enabled: true
+  auth:
+    enabled: true
+  replica:
+    replicaCount: 1
+  master:
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+  replica:
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
 
-# Services
+# Services configuration
 services:
   frontend:
     enabled: true
@@ -122,7 +138,6 @@ services:
         memory: 128Mi
     env:
       ASPNETCORE_HTTP_PORTS: "7070"
-      REDIS_ADDR: ""  # Will be updated when Redis is enabled
 
   currencyservice:
     enabled: true
