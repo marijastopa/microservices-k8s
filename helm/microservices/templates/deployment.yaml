@@ -1,0 +1,60 @@
+{{- range $serviceName, $service := .Values.services }}
+{{- if $service.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $serviceName }}
+  labels:
+    app: {{ $serviceName }}
+spec:
+  replicas: {{ $service.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $serviceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ $serviceName }}
+    spec:
+      containers:
+      - name: {{ $serviceName }}
+        image: {{ $.Values.global.registry }}/{{ $serviceName }}:{{ $service.imageTag | default $.Values.global.imageTag }}
+        ports:
+        - containerPort: {{ $service.port }}
+        {{- if $service.env }}
+        env:
+        {{- range $key, $value := $service.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+        resources:
+          {{- toYaml $service.resources | nindent 10 }}
+        livenessProbe:
+          {{- if eq $serviceName "frontend" }}
+          httpGet:
+            path: /_healthz
+            port: {{ $service.port }}
+          {{- else }}
+          tcpSocket:
+            port: {{ $service.port }}
+          {{- end }}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          {{- if eq $serviceName "frontend" }}
+          httpGet:
+            path: /_healthz
+            port: {{ $service.port }}
+          {{- else }}
+          tcpSocket:
+            port: {{ $service.port }}
+          {{- end }}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+{{- end }}
+{{- end }}

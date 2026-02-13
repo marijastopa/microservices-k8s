@@ -1,0 +1,207 @@
+# Global settings
+global:
+  registry: europe-west1-docker.pkg.dev/microservices-gke-486922/microservices
+  imageTag: v1
+
+# Redis configuration
+redis:
+  enabled: false
+  host: redis-master
+  port: 6379
+
+# Services
+services:
+  frontend:
+    enabled: true
+    replicas: 1
+    imageTag: v1
+    port: 8080
+    servicePort: 80
+    type: LoadBalancer
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    env:
+      PORT: "8080"
+      PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+      CURRENCY_SERVICE_ADDR: "currencyservice:7000"
+      CART_SERVICE_ADDR: "cartservice:7070"
+      RECOMMENDATION_SERVICE_ADDR: "recommendationservice:8080"
+      SHIPPING_SERVICE_ADDR: "shippingservice:50051"
+      CHECKOUT_SERVICE_ADDR: "checkoutservice:5050"
+      AD_SERVICE_ADDR: "adservice:9555"
+      SHOPPING_ASSISTANT_SERVICE_ADDR: "shoppingassistant:8080"
+    hpa:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPU: 50
+      targetMemory: 80
+
+  checkoutservice:
+    enabled: true
+    replicas: 2
+    imageTag: v1
+    port: 5050
+    servicePort: 5050
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    env:
+      PORT: "5050"
+      PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+      SHIPPING_SERVICE_ADDR: "shippingservice:50051"
+      PAYMENT_SERVICE_ADDR: "paymentservice:50051"
+      EMAIL_SERVICE_ADDR: "emailservice:5000"
+      CURRENCY_SERVICE_ADDR: "currencyservice:7000"
+      CART_SERVICE_ADDR: "cartservice:7070"
+    hpa:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPU: 60
+
+  recommendationservice:
+    enabled: true
+    replicas: 1
+    imageTag: v3
+    port: 8080
+    servicePort: 8080
+    resources:
+      requests:
+        cpu: 50m
+        memory: 220Mi
+      limits:
+        cpu: 200m
+        memory: 450Mi
+    env:
+      PORT: "8080"
+      PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+    hpa:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPU: 70
+
+  productcatalogservice:
+    enabled: true
+    replicas: 1
+    imageTag: v1
+    port: 3550
+    servicePort: 3550
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    env:
+      PORT: "3550"
+
+  cartservice:
+    enabled: true
+    replicas: 1
+    imageTag: v1
+    port: 7070
+    servicePort: 7070
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 300m
+        memory: 128Mi
+    env:
+      ASPNETCORE_HTTP_PORTS: "7070"
+      REDIS_ADDR: ""  # Will be updated when Redis is enabled
+
+  currencyservice:
+    enabled: true
+    replicas: 1
+    imageTag: v1
+    port: 7000
+    servicePort: 7000
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    env:
+      PORT: "7000"
+      DISABLE_PROFILER: "1"
+
+  paymentservice:
+    enabled: true
+    replicas: 1
+    imageTag: v1
+    port: 50051
+    servicePort: 50051
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    env:
+      PORT: "50051"
+      DISABLE_PROFILER: "1"
+
+  shippingservice:
+    enabled: true
+    replicas: 1
+    imageTag: v1
+    port: 50051
+    servicePort: 50051
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    env:
+      PORT: "50051"
+
+  emailservice:
+    enabled: true
+    replicas: 1
+    imageTag: v3
+    port: 8080
+    servicePort: 5000
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    env:
+      PORT: "8080"
+
+  adservice:
+    enabled: true
+    replicas: 1
+    imageTag: v1
+    port: 9555
+    servicePort: 9555
+    resources:
+      requests:
+        cpu: 50m
+        memory: 180Mi
+      limits:
+        cpu: 300m
+        memory: 300Mi
+    env:
+      PORT: "9555"
