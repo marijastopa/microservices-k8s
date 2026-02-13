@@ -1,0 +1,14 @@
+# Microservices Helm chart values override
+
+# Only override what's different
+services:
+  frontend:
+    type: LoadBalancer
+  
+  cartservice:
+    env:
+      REDIS_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: redis
+            key: redis-password

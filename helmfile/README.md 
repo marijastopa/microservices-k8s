@@ -1,0 +1,60 @@
+# Helmfile Deployment
+
+Helmfile for managing Redis and microservices Helm charts.
+
+## Prerequisites
+
+- helmfile installed
+- kubectl configured
+- Helm 3.0+
+
+## Deploy All
+```bash
+cd helmfile
+helmfile sync
+```
+
+## Deploy Specific Release
+```bash
+helmfile -l name=redis sync
+helmfile -l name=microservices sync
+```
+
+## Environments
+
+Development:
+```bash
+helmfile -e dev sync
+```
+
+Production:
+```bash
+helmfile -e prod sync
+```
+
+## List Releases
+```bash
+helmfile list
+```
+
+## Diff Before Apply
+```bash
+helmfile diff
+```
+
+Note: Requires helm-diff plugin:
+```bash
+helm plugin install https://github.com/databus23/helm-diff
+```
+
+## Destroy
+```bash
+helmfile destroy
+```
+
+## Structure
+
+- `helmfile.yaml` - Main configuration
+- `values/` - Values files per chart
+- `environments/` - Environment-specific overrides
+- `.env.example` - Environment variable template

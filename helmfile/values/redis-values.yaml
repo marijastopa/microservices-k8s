@@ -1,0 +1,22 @@
+# Redis Helm chart values
+auth:
+  enabled: true
+
+replica:
+  replicaCount: 1
+
+master:
+  persistence:
+    enabled: false
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+replica:
+  persistence:
+    enabled: false
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi

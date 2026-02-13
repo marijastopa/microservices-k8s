@@ -41,3 +41,5 @@ Thumbs.db
 # Helm
 *.tgz
 charts/
+helmfile/secrets.yaml
+helmfile/.env

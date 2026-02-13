@@ -1,0 +1,12 @@
+# Development environment
+releases:
+  - name: redis
+    values:
+      - ../values/redis-values.yaml
+      
+  - name: microservices
+    values:
+      - ../values/microservices-values.yaml
+    set:
+      - name: services.frontend.replicas
+        value: 1
